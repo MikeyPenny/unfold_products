@@ -14,26 +14,35 @@ const ProductDetail: React.FC<{
 	const [selectedImage, setSelectedImage] = useState<
 		Blob | MediaSource | null
 	>(null);
+	const [isValidForm, setIsValidForm] = useState(true);
 
 	const onChangeProdName = (ev: SyntheticEvent) => {
 		ev.preventDefault();
 		const element = ev.target as HTMLInputElement;
+		let valid = checkValidity(element.value);
+		setIsValidForm(valid);
 		props.change(element.value, "product");
 	};
 
 	const changeCategoryHandler = (ev: SyntheticEvent) => {
 		ev.preventDefault();
 		const element = ev.target as HTMLInputElement;
+		let valid = checkValidity(element.value);
+		setIsValidForm(valid);
 		props.change(element.value, "category");
 	};
 	const changePriceHandler = (ev: SyntheticEvent) => {
 		ev.preventDefault();
 		const element = ev.target as HTMLInputElement;
+		let valid = checkValidity(element.value);
+		setIsValidForm(valid);
 		props.change(element.value, "price");
 	};
 	const changeDescriptionHandler = (ev: SyntheticEvent) => {
 		ev.preventDefault();
 		const element = ev.target as HTMLInputElement;
+		let valid = checkValidity(element.value);
+		setIsValidForm(valid);
 		props.change(element.value, "description");
 	};
 
@@ -52,8 +61,21 @@ const ProductDetail: React.FC<{
 		props.sendProduct();
 	};
 
+	const checkValidity = (value: string) => {
+		let isValid = true;
+
+		if (value === "") {
+			isValid = false;
+			console.log(isValid && isValidForm);
+		}
+
+		return isValid;
+	};
+
+	console.log(isValidForm);
+
 	return (
-		<Form onSubmit={handleSubmit}>
+		<Form className={styles.form_container} onSubmit={handleSubmit}>
 			<div className={styles.form}>
 				<div className="details">
 					<Form.Group
@@ -74,20 +96,6 @@ const ProductDetail: React.FC<{
 						className="mb-3"
 						controlId="exampleForm.ControlInput1"
 					>
-						<Form.Label className={styles.label}>
-							Category
-						</Form.Label>
-						<Form.Control
-							type="text"
-							placeholder="Category"
-							value={props.category}
-							onChange={changeCategoryHandler}
-						/>
-					</Form.Group>
-					<Form.Group
-						className="mb-3"
-						controlId="exampleForm.ControlInput1"
-					>
 						<Form.Label className={styles.label}>Price</Form.Label>
 						<Form.Control
 							type="text"
@@ -101,20 +109,20 @@ const ProductDetail: React.FC<{
 						controlId="exampleForm.ControlInput1"
 					>
 						<Form.Label className={styles.label}>
-							Description
+							Category
 						</Form.Label>
 						<Form.Control
-							as="textarea"
 							type="text"
-							placeholder="Description"
-							value={props.description}
-							onChange={changeDescriptionHandler}
+							placeholder="Category"
+							value={props.category}
+							onChange={changeCategoryHandler}
 						/>
 					</Form.Group>
 				</div>
 				<div className={styles.image_container}>
 					{selectedImage && (
 						<img
+							className={styles.image_product}
 							alt="not fount"
 							width={"250px"}
 							src={URL.createObjectURL(selectedImage!)}
@@ -123,9 +131,26 @@ const ProductDetail: React.FC<{
 					<input type="file" name="myImage" onChange={loadImage} />
 				</div>
 			</div>
+			<div className="prod_description">
+				<Form.Group
+					className="mb-3"
+					controlId="exampleForm.ControlInput1"
+				>
+					<Form.Label className={styles.label}>
+						Description
+					</Form.Label>
+					<Form.Control
+						as="textarea"
+						type="text"
+						placeholder="Description"
+						value={props.description}
+						onChange={changeDescriptionHandler}
+					/>
+				</Form.Group>
+			</div>
 			<div className={styles.btn_submit}>
-				<Button variant="primary" type="submit">
-					Save changes
+				<Button disabled={!isValidForm} variant="primary" type="submit">
+					Upload product
 				</Button>
 			</div>
 		</Form>
